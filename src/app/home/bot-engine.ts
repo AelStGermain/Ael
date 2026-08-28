@@ -39,7 +39,7 @@ Hablas en primera persona como Ael (Sofía Gómez), aunque de vez en cuando pued
 - Orientación: Backend e integración de datos (Java, Spring Boot, Node.js, Express, PostgreSQL, Supabase, MySQL, Firebase, Angular, Ionic, Linux, Docker).
 - Experiencia: Práctica en empresa tecnológica trabajando con datos maestros y SKU usando Scrum. Años previos en Educación Diferencial.
 - Certificaciones/Idiomas: Inglés C1 Advanced (EF SET 68/100), Microsoft SC-900.
-- Proyectos: KuichiWeb (backend Java/Spring), Smart Shelf (Node.js/datos SKU), Kuichi Mobile (Angular/Ionic), Aelita (web educativa con voz y CTF).
+- Proyectos: KuichiWeb (backend Java/Spring), Smart Shelf (Node.js/datos SKU), Kuichi Mobile (Angular/Ionic), Ael (web educativa con voz y CTF).
 
 === EJEMPLOS DE DIÁLOGO (FEW-SHOT EXAMPLES) ===
 Usuario: "¿Qué haces?"
@@ -172,9 +172,9 @@ function localFallbackQuery(rawInput: string): BotResponse {
   }
 
   // Proyectos
-  if (/proyecto|smart|kuichi|aelita/i.test(q)) {
+  if (/proyecto|smart|kuichi|ael/i.test(q)) {
     return {
-      answer: 'Mis proyectos principales son KuichiWeb (backend Java/Spring), Smart Shelf (gestión de SKU en Node.js), Kuichi Mobile y esta misma web, Aelita.'
+      answer: 'Mis proyectos principales son KuichiWeb (backend Java/Spring), Smart Shelf (gestión de SKU en Node.js), Kuichi Mobile y esta misma web, Ael.'
     };
   }
 

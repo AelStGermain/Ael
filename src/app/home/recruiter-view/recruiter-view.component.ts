@@ -1,4 +1,5 @@
 import {
+  OnInit,
   AfterViewInit,
   Component,
   ElementRef,
@@ -12,7 +13,7 @@ import { RouterModule } from '@angular/router';
 import { BotService } from '../../service/bot.service';
 
 type RecruiterSection = 'profile' | 'projects' | 'stack' | 'trajectory' | 'contact';
-type RecruiterQuestion = 'hire' | 'spring' | 'education' | 'projects';
+type RecruiterQuestion = 'hire' | 'experience' | 'spring' | 'security' | 'education' | 'projects';
 
 interface RecruiterProject {
   id: 'kuichi-web' | 'patota' | 'kuichi-app';
@@ -26,6 +27,12 @@ interface RecruiterProject {
   techs: string[];
   demoUrl: string;
   architectureModal: string;
+  archTitle: string;
+  archSection1Title: string;
+  archSection1Desc: string;
+  archSection2Title: string;
+  archSection2Desc?: string;
+  archBullets?: string[];
 }
 
 interface RecruiterMessage {
@@ -45,16 +52,24 @@ interface RecruiterWheelStop {
   templateUrl: './recruiter-view.component.html',
   styleUrls: ['./recruiter-view.component.css']
 })
-export class RecruiterViewComponent implements AfterViewInit, OnDestroy {
+export class RecruiterViewComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('trackedSection') trackedSections?: QueryList<ElementRef<HTMLElement>>;
 
-  readonly sections: Array<{ id: RecruiterSection; label: string; shortLabel: string }> = [
-    { id: 'profile', label: 'Perfil', shortLabel: '01' },
-    { id: 'projects', label: 'Proyectos', shortLabel: '02' },
-    { id: 'stack', label: 'Tecnologías', shortLabel: '03' },
-    { id: 'trajectory', label: 'Trayectoria', shortLabel: '04' },
-    { id: 'contact', label: 'Contacto', shortLabel: '05' }
-  ];
+  get sections() {
+    return this.currentLanguage === 'es' ? [
+      { id: 'profile' as RecruiterSection, label: 'Perfil', shortLabel: '01' },
+      { id: 'projects' as RecruiterSection, label: 'Proyectos', shortLabel: '02' },
+      { id: 'stack' as RecruiterSection, label: 'Tecnologías', shortLabel: '03' },
+      { id: 'trajectory' as RecruiterSection, label: 'Trayectoria', shortLabel: '04' },
+      { id: 'contact' as RecruiterSection, label: 'Contacto', shortLabel: '05' }
+    ] : [
+      { id: 'profile' as RecruiterSection, label: 'Profile', shortLabel: '01' },
+      { id: 'projects' as RecruiterSection, label: 'Projects', shortLabel: '02' },
+      { id: 'stack' as RecruiterSection, label: 'Stack', shortLabel: '03' },
+      { id: 'trajectory' as RecruiterSection, label: 'Trajectory', shortLabel: '04' },
+      { id: 'contact' as RecruiterSection, label: 'Contact', shortLabel: '05' }
+    ];
+  }
 
   readonly wheelStops: RecruiterWheelStop[] = [
     { targetId: 'recruiter-profile', section: 'profile' },
@@ -74,10 +89,10 @@ export class RecruiterViewComponent implements AfterViewInit, OnDestroy {
     contact: 1
   };
 
-  readonly projects: RecruiterProject[] = [
+  readonly projectsEs: RecruiterProject[] = [
     {
       id: 'kuichi-web',
-      chapter: 'CAPÍTULO 01',
+      chapter: '01',
       name: 'Kuichi Web',
       category: 'VET PLATFORM · WEB',
       summary: 'Plataforma web para cuidar mascotas y conectar a sus dueños con servicios veterinarios, registros médicos y ofertas.',
@@ -86,11 +101,20 @@ export class RecruiterViewComponent implements AfterViewInit, OnDestroy {
       role: 'Desarrollo de aplicación web',
       techs: ['Java', 'Spring Boot', 'Angular', 'REST API'],
       demoUrl: 'https://aelstgermain.github.io/kuichiweb/',
-      architectureModal: '#kuichiWebModal'
+      architectureModal: '#kuichiWebModal',
+      archTitle: 'Kuichi Web · Ingeniería & integración',
+      archSection1Title: 'Arquitectura cliente-servidor',
+      archSection1Desc: 'Single Page Application construida con Angular y conectada a servicios REST desarrollados con Java y Spring Boot.',
+      archSection2Title: 'Capas principales',
+      archBullets: [
+        'Presentación: Angular y TypeScript.',
+        'Negocio: Java, Spring Boot y servicios REST.',
+        'Datos: Persistencia relacional.'
+      ]
     },
     {
       id: 'patota',
-      chapter: 'CAPÍTULO 02',
+      chapter: '02',
       name: 'Patota',
       category: 'COMMUNITY · WEB APP',
       summary: 'Aplicación para convocar grupos de personas y coordinar paseos o actividades al aire libre.',
@@ -99,11 +123,21 @@ export class RecruiterViewComponent implements AfterViewInit, OnDestroy {
       role: 'Diseño y desarrollo web',
       techs: ['JavaScript', 'HTML5/CSS3', 'Web App', 'UX/UI'],
       demoUrl: 'https://aelstgermain.github.io/Patota',
-      architectureModal: '#patotaModal'
+      architectureModal: '#patotaModal',
+      archTitle: 'Patota · Arquitectura & flujos',
+      archSection1Title: 'Arquitectura del sistema',
+      archSection1Desc: 'Aplicación web modular construida con HTML5 semántico, CSS3 y lógica en JavaScript, enfocada en una experiencia ligera para actividades al aire libre.',
+      archSection2Title: 'Flujo de datos',
+      archSection2Desc: 'La información de rutas y paseos se conserva mediante almacenamiento local para mantener disponibles los datos esenciales del grupo.',
+      archBullets: [
+        'Diseño mobile-first.',
+        'Interfaz ligera.',
+        'Organización de rutas y actividades.'
+      ]
     },
     {
       id: 'kuichi-app',
-      chapter: 'CAPÍTULO 03',
+      chapter: '03',
       name: 'Kuichi App',
       category: 'MOBILE · HYBRID APP',
       summary: 'Versión móvil de Kuichi con servicios, promociones veterinarias y seguimiento desde el smartphone.',
@@ -112,49 +146,181 @@ export class RecruiterViewComponent implements AfterViewInit, OnDestroy {
       role: 'Desarrollo móvil híbrido',
       techs: ['Ionic', 'Angular', 'TypeScript', 'Mobile'],
       demoUrl: 'https://aelstgermain.github.io/kuichiapp',
-      architectureModal: '#kuichiAppModal'
+      architectureModal: '#kuichiAppModal',
+      archTitle: 'Kuichi App · Arquitectura híbrida',
+      archSection1Title: 'Estructura móvil',
+      archSection1Desc: 'Aplicación híbrida construida con Ionic y Angular para acercar los servicios principales de Kuichi al smartphone.',
+      archSection2Title: 'Stack',
+      archBullets: [
+        'Ionic Framework.',
+        'Angular y TypeScript.',
+        'Experiencia móvil multiplataforma.'
+      ]
     }
   ];
 
-  readonly stackGroups = [
+  readonly projectsEn: RecruiterProject[] = [
+    {
+      id: 'kuichi-web',
+      chapter: '01',
+      name: 'Kuichi Web',
+      category: 'VET PLATFORM · WEB',
+      summary: 'Web platform for pet care, connecting owners with veterinary services, medical records, and promotional offers.',
+      problem: 'Unifying pet care, medical history, and access to services in a single web experience.',
+      contribution: 'Web system connecting veterinary services, medical records, and offers in an integrated experience.',
+      role: 'Web Application Development',
+      techs: ['Java', 'Spring Boot', 'Angular', 'REST API'],
+      demoUrl: 'https://aelstgermain.github.io/kuichiweb/',
+      architectureModal: '#kuichiWebModal',
+      archTitle: 'Kuichi Web · Engineering & Integration',
+      archSection1Title: 'Client-Server Architecture',
+      archSection1Desc: 'Single Page Application built with Angular and connected to REST services developed with Java and Spring Boot.',
+      archSection2Title: 'Core Layers',
+      archBullets: [
+        'Presentation: Angular & TypeScript.',
+        'Business Logic: Java, Spring Boot & REST services.',
+        'Data: Relational persistence.'
+      ]
+    },
+    {
+      id: 'patota',
+      chapter: '02',
+      name: 'Patota',
+      category: 'COMMUNITY · WEB APP',
+      summary: 'Application to gather groups of people and coordinate outdoor walks or activities.',
+      problem: 'Facilitating the coordination and recruitment of hikers for routes and recreational outings.',
+      contribution: 'A lightweight web experience to organize outings and consolidate group information in one place.',
+      role: 'Web Design & Development',
+      techs: ['JavaScript', 'HTML5/CSS3', 'Web App', 'UX/UI'],
+      demoUrl: 'https://aelstgermain.github.io/Patota',
+      architectureModal: '#patotaModal',
+      archTitle: 'Patota · Architecture & Flows',
+      archSection1Title: 'System Architecture',
+      archSection1Desc: 'Modular web application built with semantic HTML5, CSS3, and JavaScript logic, focused on a lightweight experience for outdoor activities.',
+      archSection2Title: 'Data Flow',
+      archSection2Desc: 'Route and trek information is stored locally to keep essential group data available.',
+      archBullets: [
+        'Mobile-first design.',
+        'Lightweight interface.',
+        'Route and activity planning.'
+      ]
+    },
+    {
+      id: 'kuichi-app',
+      chapter: '03',
+      name: 'Kuichi App',
+      category: 'MOBILE · HYBRID APP',
+      summary: 'Mobile version of Kuichi featuring services, veterinary promotions, and tracking from the smartphone.',
+      problem: 'Bringing the core features of Kuichi to an accessible mobile application.',
+      contribution: 'Cross-platform hybrid application to query services and alerts related to pet care.',
+      role: 'Hybrid Mobile Development',
+      techs: ['Ionic', 'Angular', 'TypeScript', 'Mobile'],
+      demoUrl: 'https://aelstgermain.github.io/kuichiapp',
+      architectureModal: '#kuichiAppModal',
+      archTitle: 'Kuichi App · Hybrid Architecture',
+      archSection1Title: 'Mobile Structure',
+      archSection1Desc: 'Hybrid application built with Ionic and Angular to bring the main services of Kuichi to smartphones.',
+      archSection2Title: 'Stack',
+      archBullets: [
+        'Ionic Framework.',
+        'Angular & TypeScript.',
+        'Cross-platform mobile experience.'
+      ]
+    }
+  ];
+
+  get projects(): RecruiterProject[] {
+    return this.currentLanguage === 'es' ? this.projectsEs : this.projectsEn;
+  }
+
+  readonly stackGroupsEs = [
     {
       code: 'SYS.01',
-      title: 'Backend & arquitectura',
-      description: 'Servicios, lógica de negocio, seguridad y persistencia.',
-      skills: ['Java', 'Spring Boot', 'Spring MVC', 'REST APIs', 'Spring Security', 'JPA / Hibernate', 'Node.js', 'Express.js']
+      title: 'Backend & APIs',
+      description: 'Servicios, lógica de negocio, seguridad y APIs REST.',
+      skills: ['Java', 'Spring Boot', 'Spring MVC', 'Spring Security', 'JPA / Hibernate', 'Node.js', 'Express.js', 'REST APIs']
     },
     {
       code: 'SYS.02',
       title: 'Datos & integración',
-      description: 'Modelado relacional, consultas, validación y flujos de datos.',
-      skills: ['PostgreSQL', 'MySQL', 'SQL', 'H2', 'Supabase', 'Firebase', 'Master Data']
+      description: 'Bases de datos, integración de sistemas y validación de datos.',
+      skills: ['PostgreSQL', 'MySQL', 'SQL', 'Master Data', 'Data Validation', 'System Integration', 'Firebase', 'Supabase']
     },
     {
       code: 'SYS.03',
-      title: 'Web & móvil',
-      description: 'Interfaces conectadas al backend y adaptadas a distintos dispositivos.',
-      skills: ['Angular', 'TypeScript', 'Ionic', 'JavaScript', 'HTML5', 'CSS3', 'Bootstrap']
+      title: 'Web & aplicaciones',
+      description: 'Interfaces interactivas y adaptadas a distintos dispositivos.',
+      skills: ['Angular', 'React', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Ionic', 'Bootstrap']
     },
     {
       code: 'SYS.04',
-      title: 'Entrega & colaboración',
-      description: 'Herramientas y prácticas para trabajo técnico organizado.',
-      skills: ['Git', 'GitHub Actions', 'Docker', 'Linux', 'Maven', 'Scrum', 'Documentación']
+      title: 'Infraestructura & entrega',
+      description: 'Herramientas de despliegue, entrega continua y servidores.',
+      skills: ['Linux', 'Docker', 'Nginx', 'Git', 'GitHub', 'GitHub Actions', 'Maven', 'Scrum', 'Documentación técnica']
+    },
+    {
+      code: 'SYS.05',
+      title: 'Testing & seguridad',
+      description: 'Pruebas de software y conceptos fundamentales de seguridad.',
+      skills: ['Postman', 'Jest', 'Jasmine', 'API Testing', 'Fundamentos de seguridad', 'Microsoft Security fundamentals']
     }
   ];
 
-  readonly timeline = [
+  readonly stackGroupsEn = [
     {
-      marker: 'AHORA',
-      meta: 'PRÁCTICA PROFESIONAL',
-      title: 'Junior Backend & Data Integration · FollowUP',
-      description: 'Desarrollo backend, integración de sistemas, validación de datos operacionales, consultas SQL y documentación dentro de un equipo Scrum.'
+      code: 'SYS.01',
+      title: 'Backend & APIs',
+      description: 'Services, business logic, security, and REST APIs.',
+      skills: ['Java', 'Spring Boot', 'Spring MVC', 'Spring Security', 'JPA / Hibernate', 'Node.js', 'Express.js', 'REST APIs']
+    },
+    {
+      code: 'SYS.02',
+      title: 'Data & Integration',
+      description: 'Databases, systems integration, and data validation.',
+      skills: ['PostgreSQL', 'MySQL', 'SQL', 'Master Data', 'Data Validation', 'System Integration', 'Firebase', 'Supabase']
+    },
+    {
+      code: 'SYS.03',
+      title: 'Web & Applications',
+      description: 'Interactive interfaces tailored to different devices.',
+      skills: ['Angular', 'React', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Ionic', 'Bootstrap']
+    },
+    {
+      code: 'SYS.04',
+      title: 'Infrastructure & Delivery',
+      description: 'Deployment tools, continuous delivery, and servers.',
+      skills: ['Linux', 'Docker', 'Nginx', 'Git', 'GitHub', 'GitHub Actions', 'Maven', 'Scrum', 'Technical Documentation']
+    },
+    {
+      code: 'SYS.05',
+      title: 'Testing & Security',
+      description: 'Software testing and fundamental security concepts.',
+      skills: ['Postman', 'Jest', 'Jasmine', 'API Testing', 'Security Fundamentals', 'Microsoft Security fundamentals']
+    }
+  ];
+
+  get stackGroups() {
+    return this.currentLanguage === 'es' ? this.stackGroupsEs : this.stackGroupsEn;
+  }
+
+  readonly timelineEs = [
+    {
+      marker: '2026',
+      meta: 'EXPERIENCIA PROFESIONAL',
+      title: 'Product Operations / Data Integration · Follow Up',
+      description: 'Trabajo con datos operacionales, Master Data, validación de información, integración de sistemas y consultas SQL. Despliegue y operación de aplicaciones internas usando Linux (Ubuntu Server), Docker, Node.js y Nginx.'
     },
     {
       marker: 'EN CURSO',
       meta: 'FORMACIÓN SUPERIOR',
       title: 'Ingeniería Civil Informática',
-      description: 'Formación en ciencias de la computación, algoritmos, bases de datos y arquitectura de sistemas.'
+      description: 'Estudiante del programa Advance en la Universidad San Sebastián. Formación en ciencias de la computación, algoritmos, bases de datos y arquitectura de sistemas.'
+    },
+    {
+      marker: '2024',
+      meta: 'CERTIFICACIÓN MICROSOFT',
+      title: 'Security, Compliance, and Identity Fundamentals (SC-900)',
+      description: 'Certificación oficial de Microsoft obtenida en 2024. Conocimientos fundamentales en seguridad, cumplimiento e identidad.'
     },
     {
       marker: 'TÍTULO',
@@ -166,19 +332,52 @@ export class RecruiterViewComponent implements AfterViewInit, OnDestroy {
       marker: 'C1',
       meta: 'IDIOMAS',
       title: 'Inglés avanzado',
-      description: 'Lectura de documentación técnica y comunicación en contextos tecnológicos.'
+      description: 'Lectura de documentación técnica y comunicación fluida en contextos tecnológicos.'
     }
   ];
 
-  activeSection: RecruiterSection = 'profile';
-  activeSectionPage = 1;
-  selectedProject = this.projects[0];
-  aiMessages: RecruiterMessage[] = [
+  readonly timelineEn = [
     {
-      sender: 'bot',
-      text: 'Soy AEL_AI. Puedo resumir el perfil, la formación o los proyectos de Sofía.'
+      marker: '2026',
+      meta: 'PROFESSIONAL EXPERIENCE',
+      title: 'Product Operations / Data Integration · Follow Up',
+      description: 'Working with operational data, Master Data, information validation, systems integration, and SQL queries. Deployment and operation of internal apps using Linux (Ubuntu Server), Docker, Node.js, and Nginx.'
+    },
+    {
+      marker: 'IN PROGRESS',
+      meta: 'HIGHER EDUCATION',
+      title: 'Civil Computer Engineering',
+      description: 'Advance program student at Universidad San Sebastián. Training in computer science, algorithms, databases, and systems architecture.'
+    },
+    {
+      marker: '2024',
+      meta: 'MICROSOFT CERTIFICATION',
+      title: 'Security, Compliance, and Identity Fundamentals (SC-900)',
+      description: 'Official Microsoft certification obtained in 2024. Foundational knowledge in security, compliance, and identity.'
+    },
+    {
+      marker: 'DEGREE',
+      meta: 'TECHNICAL EDUCATION',
+      title: 'Systems Analyst Technician',
+      description: 'Solid grounding in software lifecycle, object-oriented programming, databases, and application development.'
+    },
+    {
+      marker: 'C1',
+      meta: 'LANGUAGES',
+      title: 'Advanced English',
+      description: 'Reading technical documentation and fluent communication in professional technology contexts.'
     }
   ];
+
+  get timeline() {
+    return this.currentLanguage === 'es' ? this.timelineEs : this.timelineEn;
+  }
+
+  activeSection: RecruiterSection = 'profile';
+  activeSectionPage = 1;
+  selectedProject!: RecruiterProject;
+
+  aiMessages: RecruiterMessage[] = [];
   aiTyping = false;
 
   private observer?: IntersectionObserver;
@@ -192,7 +391,7 @@ export class RecruiterViewComponent implements AfterViewInit, OnDestroy {
   constructor(
     private host: ElementRef<HTMLElement>,
     public botService: BotService
-  ) {}
+  ) { }
 
   ngAfterViewInit(): void {
     if (typeof IntersectionObserver === 'undefined') {
@@ -314,6 +513,18 @@ export class RecruiterViewComponent implements AfterViewInit, OnDestroy {
     this.activeSectionPage = 1;
   }
 
+  ngOnInit(): void {
+    this.selectedProject = this.projects[0];
+    this.aiMessages = [
+      {
+        sender: 'bot',
+        text: this.currentLanguage === 'es'
+          ? 'Soy AEL_AI. Puedo guiarte sobre el perfil profesional, la experiencia, el backend, la formación, la seguridad o los proyectos de Sofía.'
+          : 'I am AEL_AI. I can guide you on Sofia\'s professional profile, experience, backend, education, security, or projects.'
+      }
+    ];
+  }
+
   selectProject(project: RecruiterProject): void {
     this.selectedProject = project;
   }
@@ -322,31 +533,79 @@ export class RecruiterViewComponent implements AfterViewInit, OnDestroy {
     this.botService.toggleRecruiterMode();
   }
 
+  get currentLanguage(): 'es' | 'en' {
+    return this.botService.recruiterLanguage;
+  }
+
+  toggleLanguage(): void {
+    const nextLang = this.currentLanguage === 'es' ? 'en' : 'es';
+    this.botService.setRecruiterLanguage(nextLang);
+    this.aiMessages = [
+      {
+        sender: 'bot',
+        text: nextLang === 'es'
+          ? 'Soy AEL_AI. Puedo guiarte sobre el perfil profesional, la experiencia, el backend, la formación, la seguridad o los proyectos de Sofía.'
+          : 'I am AEL_AI. I can guide you on Sofia\'s professional profile, experience, backend, education, security, or projects.'
+      }
+    ];
+    // Sync selectedProject reference
+    const currentId = this.selectedProject.id;
+    const synced = this.projects.find(p => p.id === currentId);
+    if (synced) {
+      this.selectedProject = synced;
+    }
+  }
+
   askRecruiterAi(topic: RecruiterQuestion): void {
     if (this.aiTyping) {
       return;
     }
 
-    const questions: Record<RecruiterQuestion, string> = {
+    const questionsEs: Record<RecruiterQuestion, string> = {
       hire: '¿Qué aporta Sofía a un equipo?',
-      spring: '¿Cuál es su experiencia con Java y Spring?',
-      education: '¿Cuál es su formación?',
+      experience: '¿Cuál es su experiencia profesional?',
+      spring: '¿Cuál es su experiencia con backend y APIs?',
+      security: '¿Qué conocimientos tiene en seguridad?',
+      education: '¿Cuál es su formación académica?',
       projects: '¿Qué proyectos puedo revisar?'
     };
 
-    const responses: Record<RecruiterQuestion, string> = {
-      hire: 'Aporta una base backend con Java, Spring Boot y SQL, experiencia de integración y datos, documentación técnica y habilidades transferibles desde el sector educativo.',
-      spring: 'Su stack incluye Java, Spring Boot, Spring MVC, Spring Security, JPA/Hibernate y diseño de APIs REST conectadas a bases de datos relacionales.',
-      education: 'Es Técnico Analista de Sistemas, estudia Ingeniería Civil Informática y cuenta con inglés avanzado C1.',
-      projects: 'Puedes revisar Kuichi Web, Patota y Kuichi App. Las tres demos están enlazadas en la sección de proyectos.'
+    const responsesEs: Record<RecruiterQuestion, string> = {
+      hire: 'Aporta una sólida base en backend (Java/Spring, Node/Express), integración de sistemas, manejo de SQL y datos operacionales, buenas prácticas de documentación, uso de Linux/Docker y fundamentos de seguridad.',
+      experience: 'Cuenta con experiencia en Product Operations y Data Integration en Follow Up, trabajando con datos operacionales, Master Data, consultas SQL, validación de información, documentación técnica y despliegues en infraestructura Linux/Docker.',
+      spring: 'Desarrolla APIs REST seguras usando Java con Spring Boot/Security/JPA y Node.js con Express, integrándolos con bases de datos relacionales como PostgreSQL y MySQL.',
+      security: 'Posee la certificación oficial Microsoft SC-900 (Security, Compliance, and Identity Fundamentals). Aplica fundamentos de desarrollo seguro, control de accesos y administración básica en servidores Linux.',
+      education: 'Es Técnico Analista de Sistemas, estudiante de Ingeniería Civil Informática (programa Advance en USS) y cuenta con certificación de inglés avanzado C1.',
+      projects: 'Puedes revisar Kuichi Web (veterinaria, Spring/Angular), Patota (grupos de trekking, Web App) y Kuichi App (móvil híbrida, Ionic/Angular). Los tres proyectos están enlazados en este portafolio.'
     };
 
-    this.aiMessages.push({ sender: 'user', text: questions[topic] });
+    const questionsEn: Record<RecruiterQuestion, string> = {
+      hire: 'What does Sofía bring to a team?',
+      experience: 'What is her professional experience?',
+      spring: 'What is her experience with backend and APIs?',
+      security: 'What are her security credentials?',
+      education: 'What is her educational background?',
+      projects: 'Which projects can I review?'
+    };
+
+    const responsesEn: Record<RecruiterQuestion, string> = {
+      hire: 'She brings a solid backend foundation (Java/Spring, Node/Express), systems integration, database/SQL management, technical documentation best practices, Linux/Docker, fast learning capacity, and security fundamentals.',
+      experience: 'She has experience in Product Operations and Data Integration at Follow Up, working with operational data, Master Data, SQL queries, data validation, technical documentation, and deployments on Linux/Docker.',
+      spring: 'She develops secure REST APIs using Java with Spring Boot/Security/JPA and Node.js with Express, connecting them with relational databases like PostgreSQL and MySQL.',
+      security: 'She holds the Microsoft SC-900 (Security, Compliance, and Identity Fundamentals) certification. She applies secure coding practices, access control, and basic Linux server administration.',
+      education: 'She is a Systems Analyst Technician, currently pursuing a B.S. in Civil Computer Engineering (USS Advance), and holds an advanced English C1 certification.',
+      projects: 'You can check Kuichi Web (veterinary, Spring/Angular), Patota (hiking groups, Web App), and Kuichi App (hybrid mobile, Ionic/Angular). All three are linked in the projects section.'
+    };
+
+    const q = this.currentLanguage === 'es' ? questionsEs : questionsEn;
+    const r = this.currentLanguage === 'es' ? responsesEs : responsesEn;
+
+    this.aiMessages.push({ sender: 'user', text: q[topic] });
     this.aiTyping = true;
 
     setTimeout(() => {
       const messageIndex = this.aiMessages.push({ sender: 'bot', text: '' }) - 1;
-      this.typeAiAnswer(responses[topic], messageIndex);
+      this.typeAiAnswer(r[topic], messageIndex);
     }, 240);
   }
 

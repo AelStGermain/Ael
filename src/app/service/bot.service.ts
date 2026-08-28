@@ -27,6 +27,8 @@ export class BotService {
     { id: 'sakura', name: 'Sakura Retro', icon: '🌸' }
   ];
 
+  recruiterLanguage: 'es' | 'en' = 'es';
+
   constructor(private router: Router, private nekoService: NekoService) {
     const savedFrame = localStorage.getItem('ael_bot_frame') as Y2kFrame;
     if (savedFrame && this.frames.some(f => f.id === savedFrame)) {
@@ -34,6 +36,7 @@ export class BotService {
     }
     if (typeof localStorage !== 'undefined') {
       this.isRecruiterMode = localStorage.getItem('ael_recruiter_mode') === 'true';
+      this.recruiterLanguage = (localStorage.getItem('ael_recruiter_lang') as 'es' | 'en') || 'es';
     }
   }
 
@@ -43,6 +46,13 @@ export class BotService {
       localStorage.setItem('ael_recruiter_mode', this.isRecruiterMode ? 'true' : 'false');
     }
     this.recruiterModeChanged.emit(this.isRecruiterMode);
+  }
+
+  setRecruiterLanguage(lang: 'es' | 'en') {
+    this.recruiterLanguage = lang;
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('ael_recruiter_lang', lang);
+    }
   }
 
   openBot() {

@@ -55,10 +55,10 @@ export class AppComponent implements OnInit {
     { title: 'LECTOR MÁGICO', path: '/lector', icon: '🎤', badge: 'VOICE API', desc: 'Reconocimiento de voz' },
     { title: 'CIPHER TERMINAL', path: '/cipher', icon: '🔐', badge: 'CRYPTO', desc: 'Codifica secretos' },
     { title: 'BATALLA NAVAL', path: '/batalla-naval', icon: '🚢', badge: 'STRATEGY', desc: 'Estrategia y estado' },
-    { title: 'SNAKE RETRO', path: '/snake', icon: '🐍', badge: 'ARCADE', desc: 'Arcade clásico' },
+    { title: 'SNAKE', path: '/snake', icon: '🐍', badge: 'ARCADE', desc: 'Arcade clásico' },
     { title: 'MEMORICE', path: '/memorice', icon: '⚡', badge: 'MEMORY', desc: 'Encuentra parejas' },
     { title: 'PALABRAS', path: '/palabras', icon: '🌻', badge: 'LEARNING', desc: 'Aprende jugando' },
-    { title: 'TRES EN RAYA', path: '/gato', icon: '🎮', badge: 'RETRO', desc: 'Tic-Tac-Toe retro' }
+    { title: 'TRES EN RAYA', path: '/gato', icon: '🎮', badge: 'RETRO', desc: 'Tres en Raya' }
   ];
 
   readonly developerProjects: DeveloperProject[] = [
@@ -117,7 +117,9 @@ export class AppComponent implements OnInit {
       }
     }
     this.setCursor(localStorage.getItem('ael-cursor') || 'cursor1');
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(event => {
+    this.router.events.pipe(
+      filter((event: any): event is NavigationEnd => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
       const url = (event as NavigationEnd).urlAfterRedirects.split('?')[0];
       this.isEditorialPage = url === '/';
       document.body.classList.toggle('index-page', url === '/');
@@ -133,6 +135,17 @@ export class AppComponent implements OnInit {
   chooseViewMode(mode: 'recruiter' | 'personal') {
     const targetVal = mode === 'recruiter';
     if (this.botService.isRecruiterMode !== targetVal) {
+      this.botService.toggleRecruiterMode();
+    }
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('ael_view_prompted', 'true');
+    }
+    this.showViewPromptModal = false;
+  }
+
+  chooseRecruiterView(lang: 'es' | 'en') {
+    this.botService.setRecruiterLanguage(lang);
+    if (!this.botService.isRecruiterMode) {
       this.botService.toggleRecruiterMode();
     }
     if (typeof localStorage !== 'undefined') {

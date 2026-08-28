@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     userBio: 'Software Developer & Systems Analyst Student'
   };
   githubEvents: GitHubEventItem[] = [
-    { repo: 'AelStGermain/Aelita', type: 'PushEvent', message: 'feat: add recruiter mode & live radio visualizer', date: '2026-07-26' },
+    { repo: 'AelStGermain/Ael', type: 'PushEvent', message: 'feat: add recruiter mode & live radio visualizer', date: '2026-07-26' },
     { repo: 'AelStGermain/Patota', type: 'PushEvent', message: 'refactor: update group route management UI', date: '2026-07-25' },
     { repo: 'AelStGermain/kuichiweb', type: 'PushEvent', message: 'feat: add vet service booking API integration', date: '2026-07-22' }
   ];

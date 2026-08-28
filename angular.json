@@ -121,12 +121,15 @@
         "deploy": {
           "builder": "angular-cli-ghpages:deploy",
           "options": {
-            "baseHref": "/Aelita/",
+            "baseHref": "/Ael/",
             "dir": "dist",
             "branch": "gh-pages"
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "477572ea-8e66-4f3b-bcdc-34abd230293c"
   }
 }
